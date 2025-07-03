@@ -1,25 +1,27 @@
 import styles from "./TodoForm.module.css";
 
-export function TodoForm() {
+export function TodoForm({ onCreate }) {
     function handleSubmit(event) {
         event.preventDefault();
 
         const { elements } = event.target;
         if (elements.name.value === "") return;
-        
-        console.log({
-            name: event.target.name.value,
-            description: event.target.description.value,
-            deadline: event.target.deadline.value,
-            priority: event.target.priority.value,
-            completed: false
-        });
+
+        onCreate({
+            name: elements.name.value,
+            description: elements.description.value,
+            deadline: elements.deadline.value,
+            priority: elements.priority.value,
+            completed: false,
+          });
+
+        event.target.reset();
     }
   return (
     <section>
       <h3 className={styles.Title}>New To-Do</h3>
 
-          <form className={styles.Form} onSubmit={handleSubmit}>
+      <form className={styles.Form} onSubmit={handleSubmit}>
         <div className={styles.FormFields}>
           <div className={styles.FormField}>
             <input
