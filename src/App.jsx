@@ -1,4 +1,5 @@
 
+import { TodoForm } from './components/TodoForm/TodoForm'
 import styles from './App.module.css'
 
 function App() {
@@ -9,7 +10,9 @@ function App() {
       <h2 className={styles.Title}>To-Do App</h2>
       </header>
 
-      <div className={styles.AppContainer}>Content</div>
+      <div className={styles.AppContainer}>
+        <TodoForm />
+      </div>
     </div>
   )
 }
