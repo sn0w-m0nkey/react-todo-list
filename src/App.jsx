@@ -30,7 +30,7 @@ const TODOS_DEFAULT = [
   },
   {
     id: "4",
-    name: "Test Todo only with a name",
+    name: "Test Todo onlye with a name",
     description: "",
     deadline: "",
     priority: "none",
@@ -48,10 +48,14 @@ function App() {
     ]);
   }
 
-  function handleUpdate(id, updatedTodo) {
+  function handleUpdate(id, newTodo) {
     setTodos((prevTodos) =>
-      prevTodos.map((todo) => (todo.id === id ? updatedTodo : todo))
+      prevTodos.map((todo) => (todo.id === id ? newTodo : todo))
     );
+  }
+
+  function handleDelete(id) {
+    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
   }
 
   return (
@@ -63,7 +67,11 @@ function App() {
 
       <div className={styles.AppContainer}>
         <TodoForm onCreate={handleCreate} />
-        <TodoList todos={todos} onUpdate={handleUpdate} />
+        <TodoList
+          todos={todos}
+          onUpdate={handleUpdate}
+          onDelete={handleDelete}
+        />
       </div>
     </div>
   );
