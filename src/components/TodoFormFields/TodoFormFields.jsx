@@ -1,7 +1,12 @@
 import { PRIORITIES, PRIORITY_DEFAULT } from "../../constants/priorities";
 import styles from "./TodoFormFields.module.css";
 
-export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
+export function TodoFormFields({
+  todo = {},
+  showAllFields = true,
+  register,
+  errors = {}
+}) {
   return (
     <>
       <div className={styles.FormFields}>
@@ -12,8 +17,14 @@ export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
             placeholder="Name*"
             autoComplete="off"
             defaultValue={todo.name}
-            {...register('name', { required: true, minLength: 3, maxLength: 50 })} // Register with react-hook-form
+            {...register('name',
+              {
+                required: "Name is required",
+                minLength: { value: 3, message: "Name must be at least 3 characters long" },
+                maxLength: { value: 50, message: "Name must be at most 50 characters long" }
+              })} // Register with react-hook-form
           />
+          {errors.name && errors.name.message}
         </div>
 
         {showAllFields && (
@@ -24,8 +35,11 @@ export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
                 placeholder="Description"
                 rows="3"
                 defaultValue={todo.description}
-                {...register('description', { maxLength: 200 })} // Register with react-hook-form
+                {...register('description', {
+                  maxLength: { value: 200, message: "Description must be at most 200 characters long" }
+                })} // Register with react-hook-form
               />
+              {errors.description && errors.description.message}
             </div>
 
             <div className={styles.FormGroup}>
@@ -34,10 +48,14 @@ export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
                 <input type="date"
                   id="deadline"
                   defaultValue={todo.deadline}
-                  {...register('deadline', !todo.id && {
-                    min: new Date().toISOString().split("T")[0]
+                  {...register('deadline', {
+                    min: !todo.id && {
+                      value: new Date().toISOString().split("T")[0],
+                      message: "Deadline cannot be in the past"
+                    }
                   })} // Prevent past dates
                 />
+                {errors.deadline && errors.deadline.message}
               </div>
 
               <div className={styles.FormField}>
@@ -45,7 +63,11 @@ export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
                 <select
                   defaultValue={todo.priority ?? PRIORITY_DEFAULT}
                   id="priority"
-                  {...register('priority')}
+                  {...register('priority', {
+                    validate: (value) => {
+                      Object.keys(PRIORITIES).includes(value) || "Priority is not valid";
+                    }
+                  })}
                 >
                   {Object.entries(PRIORITIES).map(([key, { label }]) => (
                     <option key={key} value={key}>
@@ -53,6 +75,7 @@ export function TodoFormFields({ todo = {}, showAllFields = true, register }) {
                     </option>
                   ))}
                 </select>
+                {errors.priority && errors.priority.message}
               </div>
             </div>
           </>

@@ -50,7 +50,6 @@ function App() {
     ]);
   }
 
-
   function filterTodos(todo) {
     const { completed, priority } = filters;
 
