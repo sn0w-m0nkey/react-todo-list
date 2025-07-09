@@ -3,30 +3,14 @@ import { TodoForm } from "./components/TodoForm/TodoForm";
 import { TodoFilters } from "./components/TodoFilters/TodoFilters";
 import { TodoList } from "./components/TodoList/TodoList";
 import styles from "./App.module.css";
-
+import { api } from "./api"; // Assuming you have an api.js file for API calls
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [filters, setFilters] = useState({});
 
   function fetchTodos() {
-    //const searchParams = new URLSearchParams(filters).toString();
-
-    const url = new URL(`${import.meta.env.VITE_MOCKAPI_BASE_URL}todos`);
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) url.searchParams.append(key, value);
-    });
-
-    console.log(url);
-
-    fetch(url, {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    })
-      .then(response => {
-        if (response.ok) return response.json();
-        if (response.status === 404) { return []; }
-      })
+    api.todos.getAll(filters)
       .then(setTodos)
   }
 
@@ -35,30 +19,17 @@ function App() {
   }, [filters]); // Fetch todos when the component mounts
 
   function handleCreate(newTodo) {
-    fetch(`${import.meta.env.VITE_MOCKAPI_BASE_URL}todos`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newTodo),
-    })
-      .then(response => !!response.ok && response.json())
+    api.todos.create(newTodo)
       .then(fetchTodos)
   }
 
-  function handleUpdate(id, newTodo) {
-    fetch(`${import.meta.env.VITE_MOCKAPI_BASE_URL}todos/${id}`, {
-      method: 'PUT',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(newTodo),
-    })
-      .then(response => !!response.ok && response.json())
+  function handleUpdate(id, todo) {
+    api.todos.update(id, todo)
       .then(fetchTodos)
   }
 
   function handleDelete(id) {
-    fetch(`${import.meta.env.VITE_MOCKAPI_BASE_URL}todos/${id}`, {
-      method: 'DELETE',
-    })
-      .then(response => !!response.ok && response.json())
+    api.todos.delete(id)
       .then(fetchTodos)
   }
 
