@@ -1,5 +1,6 @@
+import { Loader } from './components/Loader/Loader';
+import { Alert } from './components/Alert/Alert';
 import { TodoForm } from "./components/TodoForm/TodoForm";
-import { Alert } from './components/Alert/Alert'
 import { TodoFilters } from "./components/TodoFilters/TodoFilters";
 import { TodoList } from "./components/TodoList/TodoList";
 import { useTodos } from "./hooks/todo";
@@ -10,6 +11,8 @@ function App() {
 
   return (
     <div className={styles.App}>
+      {JSON.stringify(todos.isLoading)}
+      {todos.isLoading && <Loader />}
       <header className={styles.Header}>
         <img className={styles.Logo} src="/to-do.png" />
         <h2 className={styles.Title}>To-Do App</h2>
