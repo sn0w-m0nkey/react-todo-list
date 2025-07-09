@@ -1,46 +1,32 @@
-const BASE_URL = import.meta.env.VITE_MOCKAPI_BASE_URL;
+import axios from 'axios';
+
+const http = axios.create({
+  baseURL: import.meta.env.VITE_MOCKAPI_BASE_URL,
+  headers: { 'content-type': 'application/json' },
+  timeout: 5000,
+})
+
+http.interceptors.response.use(({ data }) => data);
 
 export const api = {
   todos: {
     getAll: (filters = {}) => {
-      //const searchParams = new URLSearchParams(filters).toString();
-
-      const url = new URL(`${BASE_URL}todos`);
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) url.searchParams.append(key, value);
-      });
-
-      return fetch(url.toString(), {
-        method: 'GET',
-        headers: { 'content-type': 'application/json' }
-      })
-        .then(response => {
-          if (response.ok) return response.json();
-          if (response.status === 404) return [];
+      return http.get('todos', { filters })
+        .catch((error) => {
+          error?.response === 404 ? [] : Promise.reject(error)
         });
     },
 
     create: (newTodo) => {
-      return fetch(`${BASE_URL}todos`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(newTodo),
-      }).then(response => response.ok && response.json());
+      return http.post('todos', newTodo);
     },
 
     update: (id, todo) => {
-      return fetch(`${BASE_URL}todos/${id}`, {
-        method: 'PUT',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(todo),
-      }).then(response => response.ok && response.json());
+      return http.put(`todos/${id}`, todo);
     },
 
     delete: (id) => {
-      return fetch(`${BASE_URL}todos/${id}`, {
-        method: 'DELETE'
-      })
-        .then(response => response.ok && response.json());
+      return http.delete(`todos/${id}`);
     },
   }
 }
